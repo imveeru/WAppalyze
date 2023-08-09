@@ -1,4 +1,5 @@
 import regex
+import emoji
 
 def date_time(s):
     pattern = '^([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)? -'
@@ -21,3 +22,11 @@ def getDatapoint(line):
     else:
         author= None
     return date, time, author, message
+
+def split_count(text):
+    emoji_list = []
+    data = regex.findall(r'\X',text)
+    for word in data:
+        if any(char in emoji.UNICODE_EMOJI_ENGLISH for char in word):
+            emoji_list.append(word)
+    return emoji_list

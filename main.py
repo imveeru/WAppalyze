@@ -28,7 +28,6 @@ data = []
 
 if chat_file:
     bytes_data = chat_file.getvalue().decode('utf-8').splitlines()
-    st.write(len(bytes_data))
 
     messageBuffer = []
     date, time, author = None, None, None
@@ -45,26 +44,33 @@ if chat_file:
         else:
             messageBuffer.append(line)
 
+    chat_df = pd.DataFrame(data, columns=["Date", 'Time', 'Author', 'Message'])
+    chat_df['Date'] = pd.to_datetime(chat_df['Date'])
+    chat_df = chat_df[chat_df.Author.notnull()]
 
-#     with open(bytes_data, encoding="utf-8") as fp:
-#         fp.readline()
-#         messageBuffer = []
-#         date, time, author = None, None, None
-#         while True:
-#             line = fp.readline()
-#             if not line:
-#                 break
-#             line = line.strip()
-#             if date_time(line):
-#                 if len(messageBuffer) > 0:
-#                     data.append([date, time, author, ' '.join(messageBuffer)])
-#                 messageBuffer.clear()
-#                 date, time, author, message = getDatapoint(line)
-#                 messageBuffer.append(message)
-#             else:
-#                 messageBuffer.append(line)
+    #st.dataframe(chat_df)
+    media_messages = chat_df[chat_df["Message"]=='<Media omitted>']
+    
+    st.markdown("### 📨 Total Messages")
+    st.write(chat_df.shape[0])
+    st.divider()
 
-chat_df = pd.DataFrame(data, columns=["Date", 'Time', 'Author', 'Message'])
-chat_df['Date'] = pd.to_datetime(chat_df['Date'])
+    authors=chat_df.Author.unique()
+    st.markdown("### 👥 Chat Participants:")
+    st.write(authors)
+    st.divider()
+    
+    chat_df['emoji'] = chat_df["Message"].apply(split_count)
+    chat_df['Letter_Count'] = chat_df['Message'].apply(lambda s : len(s))
+    chat_df['Word_Count'] = chat_df['Message'].apply(lambda s : len(s.split(' ')))
+    
+    msg_count=[]
+    
+    for author in authors:
+        author_df=chat_df[chat_df.Author == author]
+        msg_count.append(author_df.shape[0])
 
-st.dataframe(chat_df)
+    
+
+
+    st.dataframe(chat_df)
