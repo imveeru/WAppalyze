@@ -24,6 +24,7 @@ with st.sidebar:
 from helper import *
 import pandas as pd
 import numpy as np
+from collections import Counter
 
 data = []
 
@@ -51,26 +52,26 @@ if chat_file:
 
     #st.dataframe(chat_df)
     media_messages = chat_df[chat_df["Message"]=='<Media omitted>']
-    
+
     st.markdown("### 📨 Total Messages")
     st.write(chat_df.shape[0])
     st.divider()
 
     authors=chat_df.Author.unique()
-    st.markdown("### 👥 Chat Participants:")
+    st.markdown("### 👥C hat Participants:")
     st.write(authors)
     st.divider()
-    
+
     chat_df['emoji'] = chat_df["Message"].apply(split_count)
     chat_df['Letter_Count'] = chat_df['Message'].apply(lambda s : len(s))
     chat_df['Word_Count'] = chat_df['Message'].apply(lambda s : len(s.split(' ')))
-    
+
     msg_count=[]
     wpms=[]
     ws=[]
     mms=[]
     emojis=[]
-    
+
     for author in authors:
         author_df=chat_df[chat_df.Author == author]
         msg_count.append(author_df.shape[0])
@@ -78,7 +79,7 @@ if chat_file:
         wpms.append(int(np.sum(author_df["Word_Count"])/author_df.shape[0]))
         mms.append(author_df[author_df["Message"]=='<Media omitted>'].shape[0])
         emojis.append(sum(author_df['emoji'].str.len()))
-        
+
     data_df=pd.DataFrame({
         "Authors":authors,
         "Messages Sent":msg_count,
@@ -89,9 +90,11 @@ if chat_file:
     })
 
     st.dataframe(data_df)
-    
-    total_emojis_list = list([a for b in chat_df.emoji for a in b])
+
+    total_emojis_list = [a for b in chat_df.emoji for a in b]
     emoji_dict = dict(Counter(total_emojis_list))
     emoji_dict = sorted(emoji_dict.items(), key=lambda x: x[1], reverse=True)
-    
+
     emoji_df = pd.DataFrame(emoji_dict, columns=['emoji', 'count'])
+
+    st.dataframe(emoji_df)
