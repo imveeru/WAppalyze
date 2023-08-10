@@ -3,6 +3,7 @@ import emoji
 from datetime import datetime
 import plotly.express as px
 import pandas as pd
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 def date_time(s):
     pattern = '^([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)? -'
@@ -102,3 +103,13 @@ def plot_pie_chart_from_df(data_frame, label_column, value_column, limit_labels=
         values=value_column,
         names=label_column,
     )
+    
+def plot_wordcloud(df):
+    text = " ".join(df.Message)
+    stopwords = set(STOPWORDS)
+    wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+    fig=plt.figure(figsize=(10,5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+
+    return fig

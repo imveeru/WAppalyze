@@ -26,7 +26,6 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 from test import *
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 data = []
 
@@ -56,6 +55,7 @@ if chat_file:
     ws=[]
     mms=[]
     emojis=[]
+    words=[]
 
     for author in authors:
         author_df=chat_df[chat_df.Author == author]
@@ -64,6 +64,7 @@ if chat_file:
         wpms.append(int(np.sum(author_df["Word_Count"])/author_df.shape[0]))
         mms.append(author_df[author_df["Message"]=='<Media omitted>'].shape[0])
         emojis.append(sum(author_df['emoji'].str.len()))
+        words.append(author_df[author_df.Message != "<Media omitted>"])
 
     data_df=pd.DataFrame({
         "Authors":authors,
@@ -113,5 +114,14 @@ if chat_file:
     st.markdown("### 😀Emoji Distribution")
     st.plotly_chart(plot_pie_chart_from_df(emoji_df,"emoji","count"))
     st.divider()
+    
+    message_only=chat_df[chat_df.Message != "<Media omitted>"]
+
+    st.markdown("### ✍️Most Used Words")
+    st.pyplot(plot_wordcloud(message_only))
+    
+    for i in range(len(authors)):
+        st.markdown(f"#### Most Used Words by {chat_df.Author.unique()[i]}")
+        st.pyplot(plot_wordcloud(words[i]))
     
     
