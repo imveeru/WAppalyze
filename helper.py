@@ -2,6 +2,8 @@ import regex
 import emoji
 from datetime import datetime
 import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 import pandas as pd
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
@@ -113,3 +115,19 @@ def plot_wordcloud(df):
     plt.axis("off")
 
     return fig
+
+def plot_stats(df):
+    fig = make_subplots(rows=2, cols=2)
+    fig.add_trace(go.Bar(x=df["Authors"], y=df["Messages Sent"],name="Author"),row=1,col=1)
+    fig.update_xaxes(title_text="Messages Sent", row=1, col=1)
+    fig.add_trace(go.Bar(x=df["Authors"], y=df["Words Sent"],name="Author"),row=1,col=2)
+    fig.update_xaxes(title_text="Words Sent", row=1, col=2)
+    fig.add_trace(go.Bar(x=df["Authors"], y=df["Average Words per message"],name="Author"),row=2,col=1)
+    fig.update_xaxes(title_text="Average Words per message", row=2, col=1)
+    fig.add_trace(go.Bar(x=df["Authors"], y=df["Multimedia Shared"],name="Author"),row=2,col=2)
+    fig.update_xaxes(title_text="Multimedia Shared", row=2, col=2)
+    
+    fig.update_layout(showlegend=False)
+    fig.update_layout(height=700, width=650)
+    
+    return fig 

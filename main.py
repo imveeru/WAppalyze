@@ -78,6 +78,7 @@ if chat_file:
     #st.dataframe(chat_df)
     
     st.dataframe(data_df)
+    st.plotly_chart(plot_stats(data_df))
     st.divider()
 
     total_emojis_list = [a for b in chat_df.emoji for a in b]
