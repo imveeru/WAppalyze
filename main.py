@@ -26,6 +26,7 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 from test import *
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 data = []
 
@@ -40,7 +41,6 @@ if chat_file:
     media_messages = chat_df[chat_df["Message"]=='<Media omitted>']
 
     st.markdown(f"### 📨 Total Messages: {str(chat_df.shape[0])}")
-    st.divider()
 
     authors=chat_df.Author.unique()
     st.markdown("### 👥Chat Participants:")
@@ -74,9 +74,10 @@ if chat_file:
         "Emojis Sent":emojis
     })
 
-    st.dataframe(chat_df)
+    #st.dataframe(chat_df)
     
     st.dataframe(data_df)
+    st.divider()
 
     total_emojis_list = [a for b in chat_df.emoji for a in b]
     emoji_dict = dict(Counter(total_emojis_list))
@@ -84,7 +85,7 @@ if chat_file:
 
     emoji_df = pd.DataFrame(emoji_dict, columns=['emoji', 'count'])
 
-    st.dataframe(emoji_df)
+    #st.dataframe(emoji_df)
     
     times=count_frequency(chat_df.Time)
     timeKeys = list(times.keys())
@@ -102,8 +103,15 @@ if chat_file:
     # st.write(sorted_time)
     # st.write(sorted_date)
     st.markdown("### 🗓️Messages trend by date")
-    st.pyplot(plot_trend(sorted_date,"Date"))
-    st.markdown("### ⏲️Messages trend by time")
-    st.pyplot(plot_trend(sorted_time,"Time"))
+    st.plotly_chart(plot_trend(sorted_date,"Date"))
+    st.divider()
     
+    st.markdown("### ⏲️Messages trend by time")
+    st.plotly_chart(plot_trend(sorted_time,"Time"))
+    st.divider()
+    
+    st.markdown("### 😀Emoji Distribution")
     st.plotly_chart(plot_pie_chart_from_df(emoji_df,"emoji","count"))
+    st.divider()
+    
+    

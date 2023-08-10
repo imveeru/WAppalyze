@@ -64,35 +64,17 @@ def change_date_format(date_list):
 
 import matplotlib.pyplot as plt
 
-def plot_trend(data_dict,x):
-    keys = list(data_dict.keys())
-    values = list(data_dict.values())
+def plot_trend(data_dict, x):
+    df = pd.DataFrame(list(data_dict.items()), columns=[x, "No. of messages"])
     
-    fig=plt.figure(figsize=(10, 6))
-    plt.plot(keys, values)
-    plt.title(f"{x} Graph")
-    plt.xlabel(f"{x}")
-    plt.ylabel("No. of messages")
-    #plt.grid(True)
-    plt.xticks([])
-    plt.tight_layout()
-    
-    # plt.show()
-    return fig
-
-def plot_pie_chart(data_frame, label_column, value_column):
-    labels = data_frame[label_column]
-    values = data_frame[value_column]
-    
-    fig=plt.figure(figsize=(8, 8))
-    plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140)
-    plt.title("Pie Chart Distribution")
-    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    # plt.show()
+    fig = px.line(df, x=x, y="No. of messages")
+    fig.update_xaxes(title_text=x)
+    fig.update_yaxes(title_text="No. of messages")
     
     return fig
 
-def plot_pie_chart_from_df(data_frame, label_column, value_column, limit_labels=5):
+
+def plot_pie_chart_from_df(data_frame, label_column, value_column, limit_labels=8):
     labels = data_frame[label_column]
     values = data_frame[value_column]
 
@@ -119,5 +101,4 @@ def plot_pie_chart_from_df(data_frame, label_column, value_column, limit_labels=
         df_sorted,
         values=value_column,
         names=label_column,
-        title='Pie Chart Distribution',
     )
