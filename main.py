@@ -93,11 +93,17 @@ if chat_file:
     
     chat_df["Date"]=change_date_format(chat_df.Date.values)
     
-    st.dataframe(chat_df)
+    #st.dataframe(chat_df)
     dates=count_frequency(chat_df.Date)
     dateKeys = list(dates.keys())
     dateKeys=sort_dates(dateKeys)
     sorted_date = {i: dates[i] for i in dateKeys}
     
-    st.write(sorted_time)
-    st.write(sorted_date)
+    # st.write(sorted_time)
+    # st.write(sorted_date)
+    st.markdown("### 🗓️Messages trend by date")
+    st.pyplot(plot_trend(sorted_date,"Date"))
+    st.markdown("### ⏲️Messages trend by time")
+    st.pyplot(plot_trend(sorted_time,"Time"))
+    
+    st.plotly_chart(plot_pie_chart_from_df(emoji_df,"emoji","count"))

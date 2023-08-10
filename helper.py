@@ -1,6 +1,8 @@
 import regex
 import emoji
 from datetime import datetime
+import plotly.express as px
+import pandas as pd
 
 def date_time(s):
     pattern = '^([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)? -'
@@ -59,3 +61,63 @@ def change_date_format(date_list):
         except ValueError:
             print(f"Error parsing date: {date_str}")
     return new_dates
+
+import matplotlib.pyplot as plt
+
+def plot_trend(data_dict,x):
+    keys = list(data_dict.keys())
+    values = list(data_dict.values())
+    
+    fig=plt.figure(figsize=(10, 6))
+    plt.plot(keys, values)
+    plt.title(f"{x} Graph")
+    plt.xlabel(f"{x}")
+    plt.ylabel("No. of messages")
+    #plt.grid(True)
+    plt.xticks([])
+    plt.tight_layout()
+    
+    # plt.show()
+    return fig
+
+def plot_pie_chart(data_frame, label_column, value_column):
+    labels = data_frame[label_column]
+    values = data_frame[value_column]
+    
+    fig=plt.figure(figsize=(8, 8))
+    plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140)
+    plt.title("Pie Chart Distribution")
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    # plt.show()
+    
+    return fig
+
+def plot_pie_chart_from_df(data_frame, label_column, value_column, limit_labels=5):
+    labels = data_frame[label_column]
+    values = data_frame[value_column]
+
+    # Sort labels and values in descending order
+    sorted_indices = sorted(range(len(values)), key=lambda k: values[k], reverse=True)
+    sorted_labels = [labels[i] for i in sorted_indices]
+    sorted_values = [values[i] for i in sorted_indices]
+
+    # Group labels beyond the limit into "Others"
+    if len(sorted_labels) > limit_labels:
+        other_labels = sorted_labels[limit_labels:]
+        other_values = sorted_values[limit_labels:]
+        sorted_labels = sorted_labels[:limit_labels] + ["Others"]
+        sorted_values = sorted_values[:limit_labels] + [sum(other_values)]
+
+    data = {
+        label_column: sorted_labels,
+        value_column: sorted_values
+    }
+
+    df_sorted = pd.DataFrame(data)
+
+    return px.pie(
+        df_sorted,
+        values=value_column,
+        names=label_column,
+        title='Pie Chart Distribution',
+    )
