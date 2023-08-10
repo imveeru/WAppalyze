@@ -91,6 +91,9 @@ if chat_file:
     timeKeys.sort()
     sorted_time = {i: times[i] for i in timeKeys}
     
+    chat_df["Date"]=change_date_format(chat_df.Date.values)
+    
+    st.dataframe(chat_df)
     dates=count_frequency(chat_df.Date)
     dateKeys = list(dates.keys())
     dateKeys=sort_dates(dateKeys)

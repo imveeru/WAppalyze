@@ -1,6 +1,6 @@
 import regex
 import emoji
-import datetime
+from datetime import datetime
 
 def date_time(s):
     pattern = '^([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)? -'
@@ -44,6 +44,18 @@ def count_frequency(arr):
     return frequency
 
 def sort_dates(date_list):
-    date_objects = [datetime.datetime.strptime(date, "%m/%d/%y") for date in date_list]
+    date_objects = [datetime.strptime(date, "%m/%d/%y") for date in date_list]
     sorted_dates = sorted(date_objects)
     return [date.strftime("%m/%d/%y") for date in sorted_dates]
+
+def change_date_format(date_list):
+    new_format = "%m/%d/%y"
+    new_dates = []
+    for date_str in date_list:
+        try:
+            original_date = datetime.strptime(date_str, new_format)
+            new_date_str = original_date.strftime(new_format)
+            new_dates.append(new_date_str)
+        except ValueError:
+            print(f"Error parsing date: {date_str}")
+    return new_dates
