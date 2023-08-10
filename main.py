@@ -25,42 +25,27 @@ from helper import *
 import pandas as pd
 import numpy as np
 from collections import Counter
+from test import *
 
 data = []
 
 if chat_file:
-    bytes_data = chat_file.getvalue().decode('utf-8').splitlines()
+    bytes_data = chat_file.getvalue().decode('utf-8')
+    chat_df=txt_to_df(bytes_data)
+    #st.dataframe(chat_df)
 
-    messageBuffer = []
-    date, time, author = None, None, None
-    for line in bytes_data:
-        if not line:
-            break
-        line = line.strip()
-        if date_time(line):
-            if messageBuffer:
-                data.append([date, time, author, ' '.join(messageBuffer)])
-            messageBuffer.clear()
-            date, time, author, message = getDatapoint(line)
-            messageBuffer.append(message)
-        else:
-            messageBuffer.append(line)
-
-    chat_df = pd.DataFrame(data, columns=["Date", 'Time', 'Author', 'Message'])
-    chat_df['Date'] = pd.to_datetime(chat_df['Date'])
     chat_df = chat_df[chat_df.Author.notnull()]
-
+    
     #st.dataframe(chat_df)
     media_messages = chat_df[chat_df["Message"]=='<Media omitted>']
 
-    st.markdown("### 📨 Total Messages")
-    st.write(chat_df.shape[0])
+    st.markdown(f"### 📨 Total Messages: {str(chat_df.shape[0])}")
     st.divider()
 
     authors=chat_df.Author.unique()
-    st.markdown("### 👥C hat Participants:")
-    st.write(authors)
-    st.divider()
+    st.markdown("### 👥Chat Participants:")
+    # st.write(authors)
+    # st.divider()
 
     chat_df['emoji'] = chat_df["Message"].apply(split_count)
     chat_df['Letter_Count'] = chat_df['Message'].apply(lambda s : len(s))
@@ -89,6 +74,8 @@ if chat_file:
         "Emojis Sent":emojis
     })
 
+    st.dataframe(chat_df)
+    
     st.dataframe(data_df)
 
     total_emojis_list = [a for b in chat_df.emoji for a in b]
@@ -98,3 +85,16 @@ if chat_file:
     emoji_df = pd.DataFrame(emoji_dict, columns=['emoji', 'count'])
 
     st.dataframe(emoji_df)
+    
+    times=count_frequency(chat_df.Time)
+    timeKeys = list(times.keys())
+    timeKeys.sort()
+    sorted_time = {i: times[i] for i in timeKeys}
+    
+    dates=count_frequency(chat_df.Date)
+    dateKeys = list(dates.keys())
+    dateKeys=sort_dates(dateKeys)
+    sorted_date = {i: dates[i] for i in dateKeys}
+    
+    st.write(sorted_time)
+    st.write(sorted_date)

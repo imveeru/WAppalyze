@@ -1,5 +1,6 @@
 import regex
 import emoji
+import datetime
 
 def date_time(s):
     pattern = '^([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)? -'
@@ -30,3 +31,19 @@ def split_count(text):
         if any(char in emoji.UNICODE_EMOJI_ENGLISH for char in word):
             emoji_list.append(word)
     return emoji_list
+
+def count_frequency(arr):
+    frequency = {}
+    
+    for element in arr:
+        if element in frequency:
+            frequency[element] += 1
+        else:
+            frequency[element] = 1
+            
+    return frequency
+
+def sort_dates(date_list):
+    date_objects = [datetime.datetime.strptime(date, "%m/%d/%y") for date in date_list]
+    sorted_dates = sorted(date_objects)
+    return [date.strftime("%m/%d/%y") for date in sorted_dates]
